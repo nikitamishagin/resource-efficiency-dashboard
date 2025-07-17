@@ -29,10 +29,7 @@
   "links": [],
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "Average usage of requested CPU by containers over the past 7 days.",
       "fieldConfig": {
         "defaults": {
@@ -103,10 +100,7 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "Average usage of CPU limits by containers over the past 7 days.\n",
       "fieldConfig": {
         "defaults": {
@@ -178,10 +172,7 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "Average usage of requested RAM by containers over the past 7 days.",
       "fieldConfig": {
         "defaults": {
@@ -252,10 +243,7 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "Average usage of RAM limits by containers over the past 7 days.",
       "fieldConfig": {
         "defaults": {
@@ -327,10 +315,7 @@
       "type": "gauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "Average percentage of unused resources in the selected namespace over the past 7 days.",
       "fieldConfig": {
         "defaults": {
@@ -409,10 +394,7 @@
       "type": "bargauge"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "Perfect resource ratio based on resource consumption data from the past 7 days.",
       "fieldConfig": {
         "defaults": {
@@ -474,10 +456,7 @@
       "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "The percentage of requested CPU used by containers. The graph will show 0 if requests.cpu is not set.",
       "fieldConfig": {
         "defaults": {
@@ -559,10 +538,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "(\n  sum(\n    rate(\n      container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n    [5m])\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n  ) by (container, pod, namespace)\n) * 100",
           "legendFormat": "{{pod}}/{{container}}",
@@ -574,10 +550,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "The percentage of requested RAM used by containers. The graph will show 0 if requests.memory is not set.",
       "fieldConfig": {
         "defaults": {
@@ -662,10 +635,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "(\n  sum(\n    container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  ) by (container, pod, namespace)\n) * 100",
           "legendFormat": "{{pod}}/{{container}}",
@@ -677,10 +647,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "The percentage of CPU usage by containers within limits. The graph will show 0 if limits.cpu is not set or if CPU usage was not higher than requested.",
       "fieldConfig": {
         "defaults": {
@@ -764,10 +731,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "(\n  clamp_min(\n    sum(\n      rate(\n        container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    ) by (container, pod, namespace)\n    - \n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0\n  )\n)\n/\n(\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0.001\n  )\n) * 100",
           "legendFormat": "{{pod}}/{{container}}",
@@ -779,10 +743,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "The percentage of RAM usage by containers within limits. The graph will show 0 if limits.memory is not set or if RAM usage was not higher than requested.",
       "fieldConfig": {
         "defaults": {
@@ -866,10 +827,7 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "(\n  clamp_min(\n    sum(\n      container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    0\n  )\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    1\n  )\n) * 100",
           "legendFormat": "{{pod}}/{{container}}",
@@ -881,10 +839,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
+      "datasource": "Prometheus",
       "description": "Current and recommended resource requests and limits on containers.",
       "fieldConfig": {
         "defaults": {
@@ -1058,10 +1013,7 @@
           "refId": "A"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "exemplar": false,
           "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.75,\n      rate(\n        container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    [7d:]) * 1000,\n    10\n  )\n) by (namespace, pod, container)",
@@ -1073,10 +1025,7 @@
           "refId": "B"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "exemplar": false,
           "expr": "avg(\n  kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n) by (namespace, pod, container)",
@@ -1088,10 +1037,7 @@
           "refId": "C"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "exemplar": false,
           "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.75,\n      sum(\n        container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [7d:]),\n    10485760\n  )\n) by (namespace, pod, container)",
@@ -1103,10 +1049,7 @@
           "refId": "D"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "exemplar": false,
           "expr": "avg(\n  kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n) by (namespace, pod, container) * 1000",
@@ -1118,10 +1061,7 @@
           "refId": "E"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "exemplar": false,
           "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      rate(\n        container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    [7d:]) * 1000,\n    10\n  )\n) by (namespace, pod, container)",
@@ -1133,10 +1073,7 @@
           "refId": "F"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "exemplar": false,
           "expr": "avg(\n  kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n) by (namespace, pod, container)",
@@ -1148,10 +1085,7 @@
           "refId": "G"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "000000001"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "exemplar": false,
           "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      sum(\n        container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [7d:]) * 1.1,\n    10485760\n  )\n) by (namespace, pod, container)",
@@ -1223,10 +1157,7 @@
           "text": "default",
           "value": "default"
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "PBFA97CFB590B2093"
-        },
+        "datasource": "Prometheus",
         "definition": "label_values(kube_pod_info,namespace)",
         "description": "",
         "includeAll": false,
@@ -1251,10 +1182,7 @@
             "$__all"
           ]
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "PBFA97CFB590B2093"
-        },
+        "datasource": "Prometheus",
         "definition": "label_values(kube_pod_info{namespace=\"$namespace\"},pod)",
         "includeAll": true,
         "label": "Pod",
