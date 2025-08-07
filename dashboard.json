@@ -1183,7 +1183,10 @@
           "text": "default",
           "value": "default"
         },
-        "datasource": "Prometheus",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
         "definition": "label_values(kube_pod_info,namespace)",
         "description": "",
         "includeAll": false,
@@ -1208,7 +1211,10 @@
             "$__all"
           ]
         },
-        "datasource": "Prometheus",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
         "definition": "label_values(kube_pod_info{namespace=\"$namespace\"},pod)",
         "includeAll": true,
         "label": "Pod",
@@ -1231,6 +1237,10 @@
           "value": [
             "$__all"
           ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
         },
         "definition": "label_values(kube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\"},container)",
         "includeAll": true,
