@@ -50,3 +50,79 @@ contributing to more efficient use of the Kubernetes cluster and reducing operat
 3. Analyze resource usage metrics for the selected period.
 4. Pay attention to the recommended resource values in the table at the bottom of the dashboard.
 5. Use the obtained information to adjust requests and limits in Kubernetes manifests.
+
+## How to prepare the local development environment
+
+To prepare the development environment, you can use the following commands on your kubernetes cluster. I recommend using
+minikube.
+
+Install Prometheus:
+
+```bash
+helm upgrade --install --create-namespace prometheus prometheus-community/prometheus \
+  --namespace monitoring \
+  --set alertmanager.enabled=false \
+  --set pushgateway.enabled=false \
+  --set nodeExporter.enabled=true \
+  --set kubeStateMetrics.enabled=true \               
+  --set server.service.type=NodePort \                                  
+  --set server.service.nodePort=30090 \                                 
+  --set server.global.scrape_interval="60s" \                                                                     
+  --set 'server.metricRelabelings[0].action=replace' \               
+  --set 'server.metricRelabelings[0].target_label=cluster' \         
+  --set 'server.metricRelabelings[0].replacement=minikube'
+```
+
+Install Grafana:
+
+```bash
+helm upgrade --install grafana grafana/grafana --create-namespace \                   
+  --namespace monitoring \
+  --set service.type=NodePort \     
+  --set service.nodePort=30300 \   
+  --set adminPassword='admin' \    
+  --set="datasources.datasources\.yaml.apiVersion=1" \
+  --set="datasources.datasources\.yaml.datasources[0].name=Prometheus" \
+  --set="datasources.datasources\.yaml.datasources[0].type=prometheus" \
+  --set="datasources.datasources\.yaml.datasources[0].url=http://prometheus-server.monitoring.svc.cluster.local" \
+  --set="datasources.datasources\.yaml.datasources[0].access=proxy" \
+  --set="datasources.datasources\.yaml.datasources[0].isDefault=true"
+```
+
+After that, you can import the dashboard from the `dashboard.json` file. To do this, go to the Grafana dashboard on
+http://<you-minikube-ip>:30300 and log in with the password `admin`. Then go to the `Configuration` tab in the left menu and
+click the `+` button in the upper right corner. Select `Import` and upload the `dashboard.json` file.`
+
+Now you can add a test workload to your cluster to get some metrics. For example, you can use the following command:
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpine
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: alpine
+  template:
+    metadata:
+      labels:
+        app: alpine
+    spec:
+      containers:
+        - name: alpine
+          image: alpine
+          command: ["/bin/sh", "-c", "sleep infinity"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "400m"
+              memory: "200Mi"
+EOF
+```
+
+Your development environment is ready! New metrics will be available in the dashboard after a few minutes.
