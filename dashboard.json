@@ -1193,7 +1193,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      sum(\n        container_memory_usage_bytes{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [7d:]) * 1.1,\n    10485760\n  )\n) by (namespace, pod, container)\n*\non(namnamespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      sum(\n        container_memory_usage_bytes{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [7d:]) * 1.1,\n    10485760\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
           "format": "table",
           "hide": false,
           "instant": true,
