@@ -178,7 +178,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "(\n  avg_over_time(\n    clamp_min(\n      sum(\n        rate(\n          container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n        [5m])\n      )\n      -\n      sum(\n        kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n      ),\n      0\n    )\n  [7d:])\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n    )\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ),\n    0\n  )\n) * 100",
+          "expr": "(\n  avg_over_time(\n    clamp_min(\n      sum(\n        rate(\n          container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n        [5m])\n      )\n      -\n      sum(\n        kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n      ),\n      0\n    )\n  [7d:])\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n    )\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ),\n    0\n  )\n) * 100",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
