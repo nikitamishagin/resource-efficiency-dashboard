@@ -64,23 +64,23 @@ helm upgrade --install --create-namespace prometheus prometheus-community/promet
   --set alertmanager.enabled=false \
   --set pushgateway.enabled=false \
   --set nodeExporter.enabled=true \
-  --set kubeStateMetrics.enabled=true \               
-  --set server.service.type=NodePort \                                  
-  --set server.service.nodePort=30090 \                                 
-  --set server.global.scrape_interval="60s" \                                                                     
-  --set 'server.metricRelabelings[0].action=replace' \               
-  --set 'server.metricRelabelings[0].target_label=cluster' \         
+  --set kubeStateMetrics.enabled=true \
+  --set server.service.type=NodePort \
+  --set server.service.nodePort=30090 \
+  --set server.global.scrape_interval="60s" \
+  --set 'server.metricRelabelings[0].action=replace' \
+  --set 'server.metricRelabelings[0].target_label=cluster' \
   --set 'server.metricRelabelings[0].replacement=minikube'
 ```
 
 Install Grafana:
 
 ```bash
-helm upgrade --install grafana grafana/grafana --create-namespace \                   
+helm upgrade --install grafana grafana/grafana --create-namespace \
   --namespace monitoring \
-  --set service.type=NodePort \     
-  --set service.nodePort=30300 \   
-  --set adminPassword='admin' \    
+  --set service.type=NodePort \
+  --set service.nodePort=30300 \
+  --set adminPassword='admin' \
   --set="datasources.datasources\.yaml.apiVersion=1" \
   --set="datasources.datasources\.yaml.datasources[0].name=Prometheus" \
   --set="datasources.datasources\.yaml.datasources[0].type=prometheus" \
