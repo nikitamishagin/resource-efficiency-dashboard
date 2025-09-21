@@ -67,7 +67,7 @@ helm upgrade --install --create-namespace prometheus prometheus-community/promet
   --set kubeStateMetrics.enabled=true \
   --set server.service.type=NodePort \
   --set server.service.nodePort=30090 \
-  --set server.global.scrape_interval="60s" \
+  --set server.global.scrape_interval="30s" \
   --set 'server.metricRelabelings[0].action=replace' \
   --set 'server.metricRelabelings[0].target_label=cluster' \
   --set 'server.metricRelabelings[0].replacement=minikube'
