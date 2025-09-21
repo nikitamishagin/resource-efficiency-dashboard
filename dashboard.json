@@ -1292,7 +1292,7 @@
           "query": "label_values(kube_pod_info,namespace)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "sort": 1,
         "type": "query"
@@ -1347,7 +1347,7 @@
           "query": "label_values(kube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\"},container)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "sort": 1,
         "type": "query"
