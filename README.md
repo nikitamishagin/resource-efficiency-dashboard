@@ -100,28 +100,39 @@ kubectl apply -f - <<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: alpine
+  name: fake-load
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: alpine
+      app: fake-load
   template:
     metadata:
       labels:
-        app: alpine
+        app: fake-load
     spec:
       containers:
-        - name: alpine
-          image: alpine
-          command: ["/bin/sh", "-c", "sleep infinity"]
+        - name: fake-load
+          image: alpine:3.20
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              apk add --no-cache stress-ng >/dev/null
+              echo "Starting ~40m CPU and 40Mi memory load"
+              while true; do
+                stress-ng --cpu 1 --cpu-load 4 --vm 1 --vm-bytes 40M --vm-keep --timeout 60s
+                echo "Pause 30s"
+                sleep 30
+              done
           resources:
             requests:
+              cpu: "30m"
+              memory: "30Mi"
+            limits:
               cpu: "100m"
               memory: "100Mi"
-            limits:
-              cpu: "400m"
-              memory: "200Mi"
 EOF
 ```
 
