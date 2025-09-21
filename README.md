@@ -6,6 +6,16 @@ Resource Efficiency Dashboard is a Grafana dashboard designed to monitor resourc
 clusters. The dashboard visualizes the relationship between requested and actually used resources (CPU and RAM) for
 containers, which allows optimizing resource allocation and reducing infrastructure costs.
 
+## Preview
+
+<img src="preview-1.png" alt="Resource Efficiency Dashboard preview 1" width="100%">
+
+<img src="preview-2.png" alt="Resource Efficiency Dashboard preview 2" width="100%">
+
+<img src="preview-3.png" alt="Resource Efficiency Dashboard preview 3" width="100%">
+
+<img src="preview-4.png" alt="Resource Efficiency Dashboard preview 4" width="100%">
+
 ## What the Dashboard Shows
 
 The dashboard provides the following information:
