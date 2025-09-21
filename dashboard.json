@@ -1,4 +1,59 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "12.1.1"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -25,7 +80,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": null,
   "links": [],
   "panels": [
     {
@@ -90,12 +145,12 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "(\n  avg_over_time(\n    sum(\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    )\n  [$period:])\n  / \n  sum(\n    kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n  )\n) * 100",
@@ -170,12 +225,12 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "(\n  avg_over_time(\n    clamp_min(\n      sum(\n        rate(\n          container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n        [5m])\n      )\n      -\n      sum(\n        kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n      ),\n      0\n    )\n  [$period:])\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n    )\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ),\n    0\n  )\n) * 100",
@@ -249,12 +304,12 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "(\n  avg_over_time(\n    sum(\n      container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n    )\n  [$period:])\n  / \n  sum(\n    kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  )\n) * 100",
@@ -329,12 +384,12 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "(\n  avg_over_time(\n    clamp_min(\n      sum(\n        container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n      )\n      -\n      sum(\n        kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n      ),\n      0\n    )\n  [$period:])\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    )\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ),\n    0\n  )\n) * 100",
@@ -414,12 +469,12 @@
         "sizing": "auto",
         "valueMode": "color"
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -486,12 +541,12 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "(\n  sum(\n    quantile_over_time(\n      0.75,\n      sum(\n        container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n      )\n    [$period:]) /1024/1024/1024\n  )\n  /\n  sum(\n    quantile_over_time(\n      0.75,\n      sum(\n        rate(\n          container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n        [5m])\n      )\n    [$period:])\n  )\n)",
@@ -587,12 +642,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "(\n  sum(\n    rate(\n      container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n    [5m])\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n  ) by (container, pod, namespace)\n) * 100",
@@ -691,12 +746,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "(\n  sum(\n    container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  ) by (container, pod, namespace)\n) * 100",
@@ -794,12 +849,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "(\n  clamp_min(\n    sum(\n      rate(\n        container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    ) by (container, pod, namespace)\n    - \n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0\n  )\n)\n/\n(\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0.001\n  )\n) * 100",
@@ -897,12 +952,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "(\n  clamp_min(\n    sum(\n      container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    0\n  )\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    1\n  )\n) * 100",
@@ -1080,12 +1135,12 @@
         "frameIndex": 0,
         "showHeader": true
       },
-      "pluginVersion": "12.1.0",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1114,7 +1169,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1144,7 +1199,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1174,7 +1229,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1248,7 +1303,6 @@
       "type": "table"
     }
   ],
-  "preload": false,
   "refresh": "",
   "schemaVersion": 41,
   "tags": [
@@ -1258,10 +1312,7 @@
     "list": [
       {
         "allowCustomValue": false,
-        "current": {
-          "text": "Prometheus",
-          "value": "PBFA97CFB590B2093"
-        },
+        "current": {},
         "description": "",
         "label": "Datasource",
         "name": "datasource",
@@ -1273,13 +1324,10 @@
       },
       {
         "allowCustomValue": false,
-        "current": {
-          "text": "default",
-          "value": "default"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${datasource}"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(kube_pod_info,namespace)",
         "description": "",
@@ -1299,12 +1347,7 @@
       },
       {
         "allowCustomValue": false,
-        "current": {
-          "text": "All",
-          "value": [
-            "$__all"
-          ]
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "${datasource}"
@@ -1326,15 +1369,10 @@
       },
       {
         "allowCustomValue": false,
-        "current": {
-          "text": "All",
-          "value": [
-            "$__all"
-          ]
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${datasource}"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(kube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\"},container)",
         "includeAll": true,
@@ -1419,5 +1457,6 @@
   },
   "timezone": "",
   "title": "Resource efficiency",
-  "uid": "resource-efficiency"
+  "uid": "resource-efficiency",
+  "weekStart": ""
 }
