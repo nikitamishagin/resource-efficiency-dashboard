@@ -88,7 +88,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Average usage of requested CPU by containers over the past 7 days.",
+      "description": "Average usage of requested CPU by containers over the past $period days.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -167,7 +167,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Average usage of CPU limits by containers over the past 7 days.\n",
+      "description": "Average usage of CPU limits by containers over the past $period days.\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -247,7 +247,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Average usage of requested RAM by containers over the past 7 days.",
+      "description": "Average usage of requested RAM by containers over the past $period days.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -326,7 +326,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Average usage of RAM limits by containers over the past 7 days.",
+      "description": "Average usage of RAM limits by containers over the past $period days.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -406,7 +406,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Average percentage of unused resources in the selected namespace over the past 7 days.",
+      "description": "Average percentage of unused resources in the selected namespace over the past $period days.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -493,7 +493,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Perfect resource ratio based on resource consumption data from the past 7 days.",
+      "description": "Perfect resource ratio based on resource consumption data from the past $period days.",
       "fieldConfig": {
         "defaults": {
           "color": {
