@@ -312,7 +312,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "(\n  avg_over_time(\n    sum(\n      container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n    )\n  [$period:])\n  / \n  sum(\n    kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  )\n) * 100",
+          "expr": "(\n  avg_over_time(\n    sum(\n      container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n    )\n  [$period:])\n  / \n  sum(\n    kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  )\n) * 100",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -392,7 +392,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "(\n  avg_over_time(\n    clamp_min(\n      sum(\n        container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n      )\n      -\n      sum(\n        kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n      ),\n      0\n    )\n  [$period:])\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    )\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ),\n    0\n  )\n) * 100",
+          "expr": "(\n  avg_over_time(\n    clamp_min(\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      )\n      -\n      sum(\n        kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n      ),\n      0\n    )\n  [$period:])\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    )\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ),\n    0\n  )\n) * 100",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -549,7 +549,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "(\n  sum(\n    quantile_over_time(\n      0.75,\n      sum(\n        container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n      )\n    [$period:]) /1024/1024/1024\n  )\n  /\n  sum(\n    quantile_over_time(\n      0.75,\n      sum(\n        rate(\n          container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n        [5m])\n      )\n    [$period:])\n  )\n)",
+          "expr": "(\n  sum(\n    quantile_over_time(\n      0.75,\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      )\n    [$period:]) /1024/1024/1024\n  )\n  /\n  sum(\n    quantile_over_time(\n      0.75,\n      sum(\n        rate(\n          container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n        [5m])\n      )\n    [$period:])\n  )\n)",
           "legendFormat": "{{namespace}}",
           "range": true,
           "refId": "A"
@@ -650,7 +650,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "(\n  sum(\n    rate(\n      container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n    [5m])\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n  ) by (container, pod, namespace)\n) * 100",
+          "expr": "(\n  sum(\n    rate(\n      container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n    [5m])\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n  ) by (container, pod, namespace)\n) * 100",
           "legendFormat": "{{pod}}/{{container}}",
           "range": true,
           "refId": "A"
@@ -754,7 +754,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "(\n  sum(\n    container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  ) by (container, pod, namespace)\n) * 100",
+          "expr": "(\n  sum(\n    container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  ) by (container, pod, namespace)\n) * 100",
           "legendFormat": "{{pod}}/{{container}}",
           "range": true,
           "refId": "A"
@@ -857,7 +857,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "(\n  clamp_min(\n    sum(\n      rate(\n        container_cpu_usage_seconds_total{pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    ) by (container, pod, namespace)\n    - \n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0\n  )\n)\n/\n(\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0.001\n  )\n) * 100",
+          "expr": "(\n  clamp_min(\n    sum(\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    ) by (container, pod, namespace)\n    - \n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0\n  )\n)\n/\n(\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0.001\n  )\n) * 100",
           "legendFormat": "{{pod}}/{{container}}",
           "range": true,
           "refId": "A"
@@ -960,7 +960,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "(\n  clamp_min(\n    sum(\n      container_memory_usage_bytes{pod=~\"$pod\", container=~\"$container\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    0\n  )\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    1\n  )\n) * 100",
+          "expr": "(\n  clamp_min(\n    sum(\n      container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    0\n  )\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    1\n  )\n) * 100",
           "legendFormat": "{{pod}}/{{container}}",
           "range": true,
           "refId": "A"
@@ -1144,7 +1144,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  kube_pod_container_resource_requests{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n) by (namespace, pod, container) * 1000\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg(\n  kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n) by (namespace, pod, container) * 1000\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -1158,7 +1158,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.75,\n      rate(\n        container_cpu_usage_seconds_total{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    [$period:]) * 1000,\n    10\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.75,\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    [$period:]) * 1000,\n    10\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1173,7 +1173,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  kube_pod_container_resource_requests{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg(\n  kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1188,7 +1188,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.75,\n      sum(\n        container_memory_usage_bytes{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [$period:]),\n    10485760\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.75,\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [$period:]),\n    10485760\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1203,7 +1203,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  kube_pod_container_resource_limits{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n) by (namespace, pod, container) * 1000\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg(\n  kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n) by (namespace, pod, container) * 1000\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1218,7 +1218,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      rate(\n        container_cpu_usage_seconds_total{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    [$period:]) * 1000,\n    10\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    [$period:]) * 1000,\n    10\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1233,7 +1233,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  kube_pod_container_resource_limits{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg(\n  kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1248,7 +1248,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      sum(\n        container_memory_usage_bytes{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [$period:]) * 1.1,\n    10485760\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [$period:]) * 1.1,\n    10485760\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
           "format": "table",
           "hide": false,
           "instant": true,
