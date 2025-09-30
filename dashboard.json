@@ -136,7 +136,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -153,9 +153,11 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
+          "exemplar": false,
           "expr": "(\n  avg_over_time(\n    sum(\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    )\n  [$period:])\n  / \n  sum(\n    kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n  )\n) * 100",
+          "instant": true,
           "legendFormat": "__auto",
-          "range": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -216,7 +218,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -233,9 +235,11 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
+          "exemplar": false,
           "expr": "(\n  avg_over_time(\n    clamp_min(\n      sum(\n        rate(\n          container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n        [5m])\n      )\n      -\n      sum(\n        kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n      ),\n      0\n    )\n  [$period:])\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n    )\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ),\n    0\n  )\n) * 100",
+          "instant": true,
           "legendFormat": "__auto",
-          "range": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -295,7 +299,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -312,9 +316,11 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
+          "exemplar": false,
           "expr": "(\n  avg_over_time(\n    sum(\n      container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n    )\n  [$period:])\n  / \n  sum(\n    kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  )\n) * 100",
+          "instant": true,
           "legendFormat": "__auto",
-          "range": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -375,7 +381,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -392,9 +398,11 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
+          "exemplar": false,
           "expr": "(\n  avg_over_time(\n    clamp_min(\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      )\n      -\n      sum(\n        kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n      ),\n      0\n    )\n  [$period:])\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    )\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ),\n    0\n  )\n) * 100",
+          "instant": true,
           "legendFormat": "__auto",
-          "range": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -460,7 +468,7 @@
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -531,7 +539,7 @@
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -549,7 +557,9 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
+          "exemplar": false,
           "expr": "(\n  sum(\n    quantile_over_time(\n      0.75,\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      )\n    [$period:]) /1024/1024/1024\n  )\n  /\n  sum(\n    quantile_over_time(\n      0.75,\n      sum(\n        rate(\n          container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n        [5m])\n      )\n    [$period:])\n  )\n)",
+          "instant": false,
           "legendFormat": "{{namespace}}",
           "range": true,
           "refId": "A"
