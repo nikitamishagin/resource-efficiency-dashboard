@@ -1346,6 +1346,7 @@
         "type": "query"
       },
       {
+        "allValue": ".+",
         "allowCustomValue": false,
         "current": {},
         "datasource": {
@@ -1368,6 +1369,7 @@
         "type": "query"
       },
       {
+        "allValue": ".+",
         "allowCustomValue": false,
         "current": {},
         "datasource": {
