@@ -61,6 +61,52 @@ contributing to more efficient use of the Kubernetes cluster and reducing operat
 4. Pay attention to the recommended resource values in the table at the bottom of the dashboard.
 5. Use the obtained information to adjust requests and limits in Kubernetes manifests.
 
+### Not a bug — a feature!
+
+When monitoring CPU consumption by containers in a Kubernetes cluster, there is an important nuance: the metric
+container_cpu_usage_seconds_total is a counter that shows how much CPU time a container has used.
+Because metrics are scraped at discrete intervals (typically every 30–60 seconds) and this counter is used with
+rate/irate, the resulting CPU usage graph is heavily smoothed. This means we have no visibility into short CPU spikes —
+the metric simply does not reflect them. Therefore, choosing optimal CPU limits can be tricky.
+
+In the following cases we cannot draw reliable conclusions about CPU limits:
+
+- the container uses less CPU than the configured limit and does not experience throttling;
+- the process is throttled for a significant portion of its runtime (>40%).
+
+So for the first case, rely on average CPU usage. For the second case, you should substantially increase the limit.
+
+To address this, the following formula was used:
+
+$$
+y(x) = L_1 \bigl(1 - e^{-k_1 x}\bigr) + L_2 \bigl(1 - e^{-k_2 x}\bigr), \qquad L_1 + L_2 = L
+$$
+
+where:
+
+- $ x $ — the throttling value;
+- $ L $ — the asymptotic value of the function ($ x \to \infty $);
+- $ L_1 $, $ L_2 $ — the shares of total saturation responsible for the fast and slow components;
+- $ k_1 $, $ k_2 $ — the rate coefficients (the larger $ k $, the faster the growth).
+
+The function models a process with two saturation stages: fast and slow. The first exponent provides a sharp start,
+while the second delivers a smooth approach to full saturation ($ L $).
+
+A fast start is needed when throttling is present in the selected interval. That means estimating the limit by average
+consumption is incorrect, and the existing limit should be increased.
+
+As a result, the dashboard uses a special approach to determining the limit and includes two additional panels.
+
+**Practical recommendations**
+
+When setting CPU limits for your containers, always check the throttling panel. If you don’t see throttling on the
+chart, be aware that the recommended value may be underestimated. If you see a very high throttling percentage, the
+value is ambiguous. In both cases, you will likely need to adjust the values again to arrive at a more accurate limit.
+
+Finding the smallest CPU limit at which throttling tends toward zero is the ideal scenario.
+
+Also keep in mind that much depends on your application inside the container and its workload profile.
+
 ## How to prepare the local development environment
 
 To prepare the development environment, you can use the following commands on your kubernetes cluster. I recommend using
