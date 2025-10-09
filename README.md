@@ -21,7 +21,7 @@ The dashboard provides the following information:
 - **Resource Requests Usage**: Shows how efficiently the requested CPU and RAM resources are being used (in percentages).
 - **Resource Limits Usage**: Displays how close containers are to their established limits.
 - **Average Resource Idle Percentage**: Visualizes unused resources in the selected namespace.
-- **Optimal Resource Ratio**: Calculates the ideal RAM to CPU ratio based on data from the last 7 days.
+- **Optimal Resource Ratio**: Calculates the ideal RAM to CPU ratio based on data for the selected time range.
 - **Resource Usage Graphs**: Show resource usage dynamics over time.
 - **Recommendations Table**: Compares current requests and limits with recommended values based on historical data.
 
