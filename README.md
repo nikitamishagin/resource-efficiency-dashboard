@@ -14,8 +14,6 @@ containers, which allows optimizing resource allocation and reducing infrastruct
 
 <img src="preview-3.png" alt="Resource Efficiency Dashboard preview 3" width="100%">
 
-<img src="preview-4.png" alt="Resource Efficiency Dashboard preview 4" width="100%">
-
 ## What the Dashboard Shows
 
 The dashboard provides the following information:
