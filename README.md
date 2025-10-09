@@ -144,7 +144,7 @@ helm upgrade --install grafana grafana/grafana --create-namespace \
 ```
 
 After that, you can import the dashboard from the `dashboard.json` file. To do this, go to the Grafana dashboard at
-http://<your-minikube-ip>:30300 and log in with the password `admin`. Then open the `Configuration` tab in the left menu and
+`http://<your-minikube-ip>:30300` and log in with the password `admin`. Then open the `Configuration` tab in the left menu and
 click the `+` button in the upper right corner. Select `Import` and upload the `dashboard.json` file.
 
 Now you can add a test workload to your cluster to get some metrics. For example, you can use the following command:
