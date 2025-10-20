@@ -20,7 +20,8 @@ containers, which allows optimizing resource allocation and reducing infrastruct
 
 The dashboard provides the following information:
 
-- **Resource Requests Usage**: Shows how efficiently the requested CPU and RAM resources are being used (in percentages).
+- **Resource Requests Usage**: Shows how efficiently the requested CPU and RAM resources are being used (in
+  percentages).
 - **Resource Limits Usage**: Displays how close containers are to their established limits.
 - **Average Resource Idle Percentage**: Visualizes unused resources in the selected namespace.
 - **Optimal Resource Ratio**: Calculates the ideal RAM to CPU ratio based on data for the selected time range.
@@ -39,7 +40,8 @@ This dashboard helps DevOps engineers and Kubernetes cluster administrators to:
 
 ### Importance of Setting Correct Resources for Containers
 
-Setting correct resources (requests and limits) for containers in Kubernetes is critically important for several reasons:
+Setting correct resources (requests and limits) for containers in Kubernetes is critically important for several
+reasons:
 
 - **Effective Scheduling**: The Kubernetes Scheduler uses request values to make decisions about pod placement on nodes.
   Incorrect values can lead to suboptimal load distribution.
@@ -135,18 +137,20 @@ Also keep in mind that much depends on your application inside the container and
 
 ### Integration with Horizontal Pod Autoscaler (HPA)
 
-If you use HPA, consider not only the dashboard’s recommendations but also the HPA scaling thresholds. Below are a few tips on how to use them together.
+If you use HPA, consider not only the dashboard’s recommendations but also the HPA scaling thresholds. Below are a few
+tips on how to use them together.
 
 With target = 70%, HPA tends to drive average usage to ≈ 0.7 × requests per replica. Therefore:
 
-  - If you set requests too low, the utilization metric will be inflated and HPA will overinflate the replica count.
-  - If you set requests too high, utilization will drop — you’ll get fewer replicas and “fat” pods.
+- If you set requests too low, the utilization metric will be inflated and HPA will overinflate the replica count.
+- If you set requests too high, utilization will drop — you’ll get fewer replicas and “fat” pods.
 
-First, calibrate requests using the dashboard’s metrics (stable average and quantile peaks), then set the target (typically 60–75% for CPU, 60–80% for memory) and validate HPA’s behavior.
+First, calibrate requests using the dashboard’s metrics (stable average and quantile peaks), then set the target (
+typically 60–75% for CPU, 60–80% for memory) and validate HPA’s behavior.
 
-  - If you see frequent up-scales without actual overload, increase the container’s requests or the HPA target.
-  - If CPU throttling is high, increase the CPU limit (and requests if sustained real peaks are present).
-  - If you observe OOM/pressure, increase memory requests/limits, or lower the target for memory.
+- If you see frequent up-scales without actual overload, increase the container’s requests or the HPA target.
+- If CPU throttling is high, increase the CPU limit (and requests if sustained real peaks are present).
+- If you observe OOM/pressure, increase memory requests/limits, or lower the target for memory.
 
 Revisit the values after several days with different load profiles (weekdays/weekends).
 
@@ -191,8 +195,8 @@ helm upgrade --install grafana grafana/grafana --create-namespace \
 ```
 
 After that, you can import the dashboard from the `dashboard.json` file. To do this, go to the Grafana dashboard at
-`http://<your-minikube-ip>:30300` and log in with the password `admin`. Then open the `Configuration` tab in the left menu and
-click the `+` button in the upper right corner. Select `Import` and upload the `dashboard.json` file.
+`http://<your-minikube-ip>:30300` and log in with the password `admin`. Then open the `Configuration` tab in the left
+menu and click the `+` button in the upper right corner. Select `Import` and upload the `dashboard.json` file.
 
 Now you can add a test workload to your cluster to get some metrics. For example, you can use the following command:
 
