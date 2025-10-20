@@ -1,12 +1,14 @@
 # Resource Efficiency Dashboard
 
+---
+
 ## Project Description
 
 Resource Efficiency Dashboard is a Grafana dashboard designed to monitor resource utilization efficiency in Kubernetes
 clusters. The dashboard visualizes the relationship between requested and actually used resources (CPU and RAM) for
 containers, which allows optimizing resource allocation and reducing infrastructure costs.
 
-## Preview
+### Preview
 
 <img src="preview-1.png" alt="Resource Efficiency Dashboard preview 1" width="100%">
 
@@ -14,7 +16,7 @@ containers, which allows optimizing resource allocation and reducing infrastruct
 
 <img src="preview-3.png" alt="Resource Efficiency Dashboard preview 3" width="100%">
 
-## What the Dashboard Shows
+### What the Dashboard Shows
 
 The dashboard provides the following information:
 
@@ -25,7 +27,7 @@ The dashboard provides the following information:
 - **Resource Usage Graphs**: Show resource usage dynamics over time.
 - **Recommendations Table**: Compares current requests and limits with recommended values based on historical data.
 
-## Why This Information is Important for Kubernetes Users
+### Why This Information is Important for Kubernetes Users
 
 This dashboard helps DevOps engineers and Kubernetes cluster administrators to:
 
@@ -35,7 +37,7 @@ This dashboard helps DevOps engineers and Kubernetes cluster administrators to:
 4. **Plan Scaling**: Obtain data for making decisions about cluster scaling needs.
 5. **Identify Anomalies**: Detect unusual resource usage patterns that may indicate problems in applications.
 
-## Importance of Setting Correct Resources for Containers
+### Importance of Setting Correct Resources for Containers
 
 Setting correct resources (requests and limits) for containers in Kubernetes is critically important for several reasons:
 
@@ -105,7 +107,7 @@ Finding the smallest CPU limit at which throttling tends toward zero is the idea
 
 Also keep in mind that much depends on your application inside the container and its workload profile.
 
-### Integration with Horizontal Pod Autoscaler
+### Integration with Horizontal Pod Autoscaler (HPA)
 
 If you use HPA, consider not only the dashboard’s recommendations but also the HPA scaling thresholds. Below are a few tips on how to use them together.
 
@@ -121,6 +123,8 @@ First, calibrate requests using the dashboard’s metrics (stable average and qu
   - If you observe OOM/pressure, increase memory requests/limits, or lower the target for memory.
 
 Revisit the values after several days with different load profiles (weekdays/weekends).
+
+---
 
 ## How to prepare the local development environment
 
