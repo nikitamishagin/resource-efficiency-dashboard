@@ -105,6 +105,23 @@ Finding the smallest CPU limit at which throttling tends toward zero is the idea
 
 Also keep in mind that much depends on your application inside the container and its workload profile.
 
+### Integration with Horizontal Pod Autoscaler
+
+If you use HPA, consider not only the dashboard’s recommendations but also the HPA scaling thresholds. Below are a few tips on how to use them together.
+
+With target = 70%, HPA tends to drive average usage to ≈ 0.7 × requests per replica. Therefore:
+
+  - If you set requests too low, the utilization metric will be inflated and HPA will overinflate the replica count.
+  - If you set requests too high, utilization will drop — you’ll get fewer replicas and “fat” pods.
+
+First, calibrate requests using the dashboard’s metrics (stable average and quantile peaks), then set the target (typically 60–75% for CPU, 60–80% for memory) and validate HPA’s behavior.
+
+  - If you see frequent up-scales without actual overload, increase the container’s requests or the HPA target.
+  - If CPU throttling is high, increase the CPU limit (and requests if sustained real peaks are present).
+  - If you observe OOM/pressure, increase memory requests/limits, or lower the target for memory.
+
+Revisit the values after several days with different load profiles (weekdays/weekends).
+
 ## How to prepare the local development environment
 
 To prepare the development environment, you can use the following commands on your kubernetes cluster. I recommend using
