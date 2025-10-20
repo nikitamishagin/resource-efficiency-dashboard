@@ -1543,7 +1543,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${datasource}"
         },
         "definition": "label_values(kube_pod_info,namespace)",
         "description": "",
@@ -1591,7 +1591,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "${datasource}"
         },
         "definition": "label_values(kube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\"},container)",
         "includeAll": true,
