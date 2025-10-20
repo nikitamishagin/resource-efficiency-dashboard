@@ -53,6 +53,32 @@ Setting correct resources (requests and limits) for containers in Kubernetes is 
 This dashboard provides the necessary metrics for making informed decisions when configuring container resources,
 contributing to more efficient use of the Kubernetes cluster and reducing operational costs.
 
+### How is it different from Vertical Pod Autoscaler (VPA)?
+
+At first glance, these tools look similar and seem to solve the same problem. In practice — not quite. The dashboard
+provides transparency, control, and well‑reasoned manual decisions based on history and context (including throttling
+and idle), whereas VPA automates choosing requests, but hides its logic and accounts worse for spikes and workload
+specifics. The dashboard shines when you care about manageability, cost, and working alongside HPA; VPA is convenient
+when you want “auto‑tuning” without manual analysis.
+
+#### Comparison: Dashboard vs VPA
+
+| Aspect                 | Resource Efficiency Dashboard                                                              | VPA                                                                                      |
+|------------------------|--------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| Goal                   | Analytics, recommendations, and cost/efficiency control.                                   | Auto‑tuning requests based on observed load.                                             |
+| Control                | Full manual control; transparent “why so”.                                                 | Less manual control; recommendation logic is opaque.                                     |
+| HPA compatibility      | Easy to calibrate requests to an HPA target; predictable scaling.                          | Possible conflicts with HPA on CPU (especially utilization); requires careful strategy.  |
+| Peaks and throttling   | Dedicated panels for throttling/idle; warns about underestimated limits and CPU smoothing. | Tends to under‑recommend with smoothed metrics; sees short spikes worse.                 |
+| Limits                 | Gives context to choose limits and their relationship to requests.                         | Focuses on requests; limits stay on you.                                                 |
+| Cost/density           | Clearly shows over‑provisioning, idle, and savings potential.                              | Reduces over‑provisioning gradually, but without a clear savings picture.                |
+| Transparency and audit | Historical charts, quantile peaks, explainable recommendations.                            | Recommendations/decisions are less transparent; changes are harder to justify.           |
+| Risk of instability    | Low — changes are deliberate and tested.                                                   | Possible resource oscillations with variable load and noisy metrics.                     |
+| Speed of response      | Depends on people/process.                                                                 | Automatic, but can “chase” noise.                                                        |
+| Applicability          | Production‑critical services, strict SLOs, cost sensitivity.                               | Dev/staging, auxiliary services, or as a source of recommendations (without auto‑apply). |
+| Best pattern together  | Manual requests/limits tuning + HPA with a utilization target.                             | Recommendation‑only mode (off/only‑recommend) for hints, not auto‑apply.                 |
+
+---
+
 ## How to Use the Dashboard
 
 1. Select the desired namespace from the dropdown list.
