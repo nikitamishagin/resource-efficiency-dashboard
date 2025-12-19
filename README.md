@@ -10,11 +10,9 @@ containers, which allows optimizing resource allocation and reducing infrastruct
 
 ### Preview
 
-<img src="preview-1.png" alt="Resource Efficiency Dashboard preview 1" width="100%">
+<img src="images/preview-1.png" alt="Resource Efficiency Dashboard preview 1" width="100%">
 
-<img src="preview-2.png" alt="Resource Efficiency Dashboard preview 2" width="100%">
-
-<img src="preview-3.png" alt="Resource Efficiency Dashboard preview 3" width="100%">
+<img src="images/preview-2.png" alt="Resource Efficiency Dashboard preview 2" width="100%">
 
 ### What the Dashboard Shows
 
