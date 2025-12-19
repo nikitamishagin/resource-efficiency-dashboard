@@ -96,7 +96,7 @@
           },
           "decimals": 0,
           "mappings": [],
-          "max": 100,
+          "max": 200,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -106,16 +106,20 @@
                 "value": 0
               },
               {
-                "color": "green",
-                "value": 40
+                "color": "yellow",
+                "value": 60
               },
               {
-                "color": "#EAB839",
-                "value": 70
+                "color": "green",
+                "value": 80
+              },
+              {
+                "color": "yellow",
+                "value": 120
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 140
               }
             ]
           },
@@ -189,11 +193,11 @@
               },
               {
                 "color": "green",
-                "value": 40
+                "value": 30
               },
               {
                 "color": "#EAB839",
-                "value": 70
+                "value": 65
               },
               {
                 "color": "red",
@@ -259,7 +263,7 @@
           },
           "decimals": 0,
           "mappings": [],
-          "max": 100,
+          "max": 200,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -269,16 +273,20 @@
                 "value": 0
               },
               {
-                "color": "green",
-                "value": 40
+                "color": "yellow",
+                "value": 60
               },
               {
-                "color": "#EAB839",
-                "value": 75
+                "color": "green",
+                "value": 80
+              },
+              {
+                "color": "yellow",
+                "value": 120
               },
               {
                 "color": "red",
-                "value": 90
+                "value": 140
               }
             ]
           },
@@ -486,7 +494,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "clamp_min(\n  100 - (\n    avg_over_time(\n      sum(\n        rate(\n          container_cpu_usage_seconds_total{namespace=\"$namespace\", pod!=\"\", container!=\"\"}[5m]\n        )\n      ) by (namespace)\n    [$period:])\n    /\n    avg_over_time(\n      sum(\n        kube_pod_container_resource_requests{namespace=\"$namespace\", resource=\"cpu\"}\n      ) by (namespace)\n    [$period:])\n    +\n    avg_over_time(\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod!=\"\", container!=\"\"}\n      ) by (namespace)\n    [$period:])\n    /\n    avg_over_time(\n      sum(\n        kube_pod_container_resource_requests{namespace=\"$namespace\", resource=\"memory\"}\n      ) by (namespace)\n    [$period:])\n  ) / 2 * 100,\n  0\n)",
+          "expr": "clamp_min(\n  100 - (\n    (\n      quantile_over_time(\n        0.75,\n        sum(\n          rate(\n            container_cpu_usage_seconds_total{namespace=\"$namespace\", pod!=\"\", container!=\"\"}[5m]\n          )\n          *\n          on(namespace, pod, container)\n          group_left\n          kube_pod_container_info{namespace=\"$namespace\"}\n        ) by (namespace)\n      [$period:])\n      /\n      avg_over_time(\n        sum(\n          kube_pod_container_resource_requests{namespace=\"$namespace\", resource=\"cpu\"}\n        ) by (namespace)\n      [$period:])\n    )\n    +\n    (\n      quantile_over_time(\n        0.75,\n        sum(\n          container_memory_usage_bytes{namespace=\"$namespace\", pod!=\"\",container!=\"\"}\n          *\n          on(namespace, pod, container)\n          group_left\n          kube_pod_container_info{namespace=\"$namespace\"}\n        ) by (namespace)\n      [$period:])\n      /\n      avg_over_time(\n        sum(\n          kube_pod_container_resource_requests{namespace=\"$namespace\", resource=\"memory\"}\n        ) by (namespace)\n      [$period:])\n    )\n  ) / 2 * 100,\n  0\n)\n",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -674,6 +682,212 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "The percentage of CPU usage by containers within limits. The graph will show 0 if limits.cpu is not set or if CPU usage was not higher than requested.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 50,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 19
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "(\n  clamp_min(\n    sum(\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    ) by (container, pod, namespace)\n    - \n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0\n  )\n)\n/\n(\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0.001\n  )\n) * 100",
+          "legendFormat": "{{pod}}/{{container}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Using CPU Limits",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Shows the percentage of CPU periods during which the container was throttled, indicating how often it hits its CPU limit.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-YlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "id": 32,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "sum(\n  rate(\n    container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\",pod=~\"$pod\",container=~\"$container\"}[5m]\n  )\n) by (namespace, pod, container)\n/\nsum(\n  rate(\n    container_cpu_cfs_periods_total{namespace=\"$namespace\",pod=~\"$pod\",container=~\"$container\"}[5m]\n  )\n) by (namespace, pod, container)\n* 100",
+          "legendFormat": "{{pod}}/{{container}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Throttle Rate (%)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
       "description": "The percentage of requested RAM used by containers. The graph will show 0 if requests.memory is not set.",
       "fieldConfig": {
         "defaults": {
@@ -739,8 +953,8 @@
       "gridPos": {
         "h": 9,
         "w": 12,
-        "x": 12,
-        "y": 19
+        "x": 0,
+        "y": 37
       },
       "id": 11,
       "options": {
@@ -771,109 +985,6 @@
         }
       ],
       "title": "Using RAM Requests",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "description": "The percentage of CPU usage by containers within limits. The graph will show 0 if limits.cpu is not set or if CPU usage was not higher than requested.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 50,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 28
-      },
-      "id": 13,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "(\n  clamp_min(\n    sum(\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    ) by (container, pod, namespace)\n    - \n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0\n  )\n)\n/\n(\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0.001\n  )\n) * 100",
-          "legendFormat": "{{pod}}/{{container}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Using CPU Limits",
       "type": "timeseries"
     },
     {
@@ -946,7 +1057,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 28
+        "y": 37
       },
       "id": 14,
       "options": {
@@ -977,212 +1088,6 @@
         }
       ],
       "title": "Using RAM Limits",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "description": "Shows the percentage of CPU periods during which the container was throttled, indicating how often it hits its CPU limit.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-YlRd"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 30,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 3,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 37
-      },
-      "id": 32,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sum(\n  rate(\n    container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\",pod=~\"$pod\",container=~\"$container\"}[5m]\n  )\n) by (namespace, pod, container)\n/\nsum(\n  rate(\n    container_cpu_cfs_periods_total{namespace=\"$namespace\",pod=~\"$pod\",container=~\"$container\"}[5m]\n  )\n) by (namespace, pod, container)\n* 100",
-          "legendFormat": "{{pod}}/{{container}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "CPU Throttle Rate (%)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "description": "The panel shows how the coefficient changes over time. The coefficient used in calculating of recommendation CPU limits.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 30,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 3,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 37
-      },
-      "id": 33,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "(\n  (\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (namespace, pod, container) * 1000\n    * 1\n  )\n  *\n  (\n    1\n    -\n    exp(\n      -155\n      *\n      (\n        sum(\n          rate(\n            container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n          )\n        ) by (namespace, pod, container)\n        /\n        sum(\n          rate(\n            container_cpu_cfs_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n          )\n        ) by (namespace, pod, container)\n      )\n    )\n  )\n)\n+\n(\n  (\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (namespace, pod, container) * 1000\n    * 3\n  )\n  *\n  (\n    1\n    -\n    exp(\n      -4\n      *\n      (\n        sum(\n          rate(\n            container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n          )\n        ) by (namespace, pod, container)\n        /\n        sum(\n          rate(\n            container_cpu_cfs_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n          )\n        ) by (namespace, pod, container)\n      )\n    )\n  )\n)\n",
-          "legendFormat": "{{pod}}/{{container}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Throttling-Based coefficient for CPU limit",
       "type": "timeseries"
     },
     {
@@ -1360,7 +1265,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n) by (namespace, pod, container) * 1000\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg by (namespace, owner_kind, owner_name, container) (\n  kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n  * 1000\n  *\n  on(namespace, pod)\n  group_left(owner_kind, owner_name)\n  kube_pod_owner{namespace=\"$namespace\", pod=~\"$pod\"}\n)",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -1374,7 +1279,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.75,\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    [$period:]) * 1000,\n    10\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg by (namespace, owner_kind, owner_name, container) (\n  clamp_min(\n    quantile_over_time(\n      0.75,\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    [$period:]) * 1000,\n    10\n  )\n  *\n  on(namespace, pod)\n  group_left(owner_kind, owner_name)\n  kube_pod_owner{namespace=\"$namespace\", pod=~\"$pod\"}\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1389,7 +1294,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg by (namespace, owner_kind, owner_name, container) (\n  kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  *\n  on(namespace, pod)\n  group_left(owner_kind, owner_name)\n  kube_pod_owner{namespace=\"$namespace\", pod=~\"$pod\"}\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1404,7 +1309,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.95,\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [$period:]),\n    10485760\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "avg by (namespace, owner_kind, owner_name, container) (\n  clamp_min(\n    quantile_over_time(\n      0.95,\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [$period:]),\n    10485760\n  )\n  *\n  on(namespace, pod)\n  group_left(owner_kind, owner_name)\n  kube_pod_owner{namespace=\"$namespace\", pod=~\"$pod\"}\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1419,7 +1324,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n) by (namespace, pod, container) * 1000\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "max by (namespace, owner_kind, owner_name, container) (\n  kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n  * 1000\n  *\n  on(namespace, pod)\n  group_left(owner_kind, owner_name)\n  kube_pod_owner{namespace=\"$namespace\", pod=~\"$pod\"}\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1434,7 +1339,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "(\n  avg(\n    clamp_min(\n      quantile_over_time(\n        0.95,\n        rate(\n          container_cpu_usage_seconds_total{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n        [5m])\n      [$period:]) * 1000,\n      10\n    )\n  ) by (namespace, pod, container)\n  +\n  (\n    (\n      sum(\n        kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n      ) by (namespace, pod, container) * 1000\n      * 1\n    )\n    *\n    (\n      1\n      -\n      exp(\n        -155\n        *\n        (\n          sum(\n            rate(\n              container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n            )\n          ) by (namespace, pod, container)\n          /\n          sum(\n            rate(\n              container_cpu_cfs_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n            )\n          ) by (namespace, pod, container)\n        )\n      )\n    )\n  )\n  +\n  (\n    (\n      sum(\n        kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n      ) by (namespace, pod, container) * 1000\n      * 3\n    )\n    *\n    (\n      1\n      -\n      exp(\n        -4\n        *\n        (\n          sum(\n            rate(\n              container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n            )\n          ) by (namespace, pod, container)\n          /\n          sum(\n            rate(\n              container_cpu_cfs_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n            )\n          ) by (namespace, pod, container)\n        )\n      )\n    )\n  )\n)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n",
+          "expr": "max by (namespace, owner_kind, owner_name, container) (\n  (\n    avg(\n      clamp_min(\n        quantile_over_time(\n          0.95,\n          rate(\n            container_cpu_usage_seconds_total{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n          [5m])\n        [$period:]) * 1000,\n        10\n      )\n    ) by (namespace, pod, container)\n    +\n    (\n      (\n        sum(\n          kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n        ) by (namespace, pod, container) * 1000\n        * 1\n      )\n      *\n      (\n        1\n        -\n        exp(\n          -155\n          *\n          quantile_over_time(\n            0.95,\n            (\n              sum(\n                rate(\n                  container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n                )\n              ) by (namespace, pod, container)\n              /\n              clamp_min(\n                sum(\n                  rate(\n                    container_cpu_cfs_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n                  )\n                ) by (namespace, pod, container),\n                1\n              )\n            )[$period:]\n          )\n        )\n      )\n    )\n    +\n    (\n      (\n        sum(\n          kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n        ) by (namespace, pod, container) * 1000\n        * 3\n      )\n      *\n      (\n        1\n        -\n        exp(\n          -4\n          *\n          quantile_over_time(\n            0.95,\n            (\n              sum(\n                rate(\n                  container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n                )\n              ) by (namespace, pod, container)\n              /\n              clamp_min(\n                sum(\n                  rate(\n                    container_cpu_cfs_periods_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}[5m]\n                  )\n                ) by (namespace, pod, container),\n                1\n              )\n            )[$period:]\n          )\n        )\n      )\n    )\n  )\n  *\n  on(namespace, pod)\n  group_left(owner_kind, owner_name)\n  kube_pod_owner{namespace=\"$namespace\", pod=~\"$pod\"}\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1449,7 +1354,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "max by (namespace, owner_kind, owner_name, container) (\n  kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  *\n  on(namespace, pod)\n  group_left(owner_kind, owner_name)\n  kube_pod_owner{namespace=\"$namespace\", pod=~\"$pod\"}\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1464,7 +1369,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [$period:]) * 1.1,\n    10485760\n  )\n) by (namespace, pod, container)\n*\non(namespace, pod, container)\ngroup_left\nkube_pod_container_info{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
+          "expr": "max by (namespace, owner_kind, owner_name, container) (\n  clamp_min(\n    quantile_over_time(\n      0.98,\n      sum(\n        container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      ) by (container, pod, namespace)\n    [$period:]) * 1.1,\n    10485760\n  )\n  *\n  on(namespace, pod)\n  group_left(owner_kind, owner_name)\n  kube_pod_owner{namespace=\"$namespace\", pod=~\"$pod\"}\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1489,17 +1394,18 @@
             "includeByName": {},
             "indexByName": {
               "Time": 0,
-              "Value #A": 4,
-              "Value #B": 5,
-              "Value #C": 8,
-              "Value #D": 9,
-              "Value #E": 6,
-              "Value #F": 7,
-              "Value #G": 10,
-              "Value #H": 11,
-              "container": 3,
+              "Value #A": 5,
+              "Value #B": 6,
+              "Value #C": 9,
+              "Value #D": 10,
+              "Value #E": 7,
+              "Value #F": 8,
+              "Value #G": 11,
+              "Value #H": 12,
+              "container": 4,
               "namespace": 1,
-              "pod": 2
+              "owner_kind": 2,
+              "owner_name": 3
             },
             "renameByName": {
               "Value #A": "Current CPU Requests",
@@ -1511,6 +1417,8 @@
               "Value #G": "Current RAM Limits",
               "Value #H": "Recommended RAM Limits",
               "container": "Container",
+              "owner_kind": "Kind",
+              "owner_name": "Owner",
               "pod": "Pod"
             }
           }
