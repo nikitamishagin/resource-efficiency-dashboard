@@ -1378,7 +1378,7 @@
           "refId": "H"
         }
       ],
-      "title": "Resource Requests by Containers",
+      "title": "Resource recommendations by container parent ($period)",
       "transformations": [
         {
           "id": "merge",
