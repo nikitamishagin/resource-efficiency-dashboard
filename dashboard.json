@@ -1,7 +1,7 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
+      "name": "datasource",
       "label": "Prometheus",
       "description": "",
       "type": "datasource",
@@ -154,7 +154,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -236,7 +236,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -321,7 +321,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -403,7 +403,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -490,7 +490,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -562,7 +562,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -665,7 +665,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "(\n  sum(\n    rate(\n      container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n    [5m])\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\"}\n  ) by (container, pod, namespace)\n) * 100",
@@ -768,7 +768,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "(\n  clamp_min(\n    sum(\n      rate(\n        container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n      [5m])\n    ) by (container, pod, namespace)\n    - \n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0\n  )\n)\n/\n(\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"cpu\", unit=\"core\"}\n    ) by (container, pod, namespace),\n    0.001\n  )\n) * 100",
@@ -871,7 +871,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum(\n  rate(\n    container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\",pod=~\"$pod\",container=~\"$container\"}[5m]\n  )\n) by (namespace, pod, container)\n/\nsum(\n  rate(\n    container_cpu_cfs_periods_total{namespace=\"$namespace\",pod=~\"$pod\",container=~\"$container\"}[5m]\n  )\n) by (namespace, pod, container)\n* 100",
@@ -975,7 +975,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "(\n  sum(\n    container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n  ) by (container, pod, namespace) \n  / \n  sum(\n    kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\"}\n  ) by (container, pod, namespace)\n) * 100",
@@ -1078,7 +1078,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "(\n  clamp_min(\n    sum(\n      container_memory_usage_bytes{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    0\n  )\n  /\n  clamp_min(\n    sum(\n      kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace)\n    -\n    sum(\n      kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$pod\", container=~\"$container\", resource=\"memory\", unit=\"byte\"}\n    ) by (container, pod, namespace),\n    1\n  )\n) * 100",
@@ -1261,7 +1261,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1290,7 +1290,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1320,7 +1320,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1350,7 +1350,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
